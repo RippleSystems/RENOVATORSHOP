@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Renovator — Home Renovation & Construction Management</title>
+  <meta name="description" content="Manage bids, schedules, crews, and budgets in one platform. Built for home contractors and new construction teams. Try free for 14 days." />
+  <meta property="og:title" content="Renovator — Construction Management Software" />
+  <meta property="og:description" content="Manage every project. Deliver on time. Every time." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --canvas:      #f5f0e8;
+      --canvas-2:    #ede7d9;
+      --canvas-3:    #e4dccb;
+      --canvas-4:    #d9cfbb;
+      --bark:        #2e2318;
+      --bark-2:      #3d2f1f;
+      --bark-3:      #5a4130;
+      --ink:         #3b2a1a;
+      --ink-2:       #5c4433;
+      --ink-3:       #7d6250;
+      --ink-4:       #9e8070;
+      --terra:       #b85c38;
+      --terra-lt:    #c97a56;
+      --terra-pale:  #f0d9cc;
+      --terra-dim:   rgba(184,92,56,0.12);
+      --sage:        #5a7a5a;
+      --sage-lt:     #7a9e7a;
+      --sage-pale:   #d8e8d2;
+      --wheat:       #c49a3c;
+      --wheat-pale:  #f5e8c0;
+      --slate:       #6b7e8a;
+      --slate-pale:  #d0dce3;
+      --rose:        #9e5f5f;
+      --rose-pale:   #ead8d8;
+      --fh: 'Lora', Georgia, serif;
+      --fb: 'DM Sans', system-ui, sans-serif;
+      --r-sm: 6px; --r-md: 10px; --r-lg: 16px; --r-xl: 24px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--fb); font-size: 16px; line-height: 1.65; color: var(--ink); background: var(--canvas); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    img, svg { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    .wrap     { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+    .wrap--sm { max-width: 720px;  margin: 0 auto; padding: 0 32px; }
+    .section  { padding: 96px 0; }
+    .section--alt  { background: var(--canvas-3); }
+
+    h1, h2, h3, h4 { font-family: var(--fh); font-weight: 600; line-height: 1.1; letter-spacing: -0.01em; color: var(--ink); }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: var(--fb); font-size: 11px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--terra); background: var(--terra-dim);
+      border: 1px solid rgba(184,92,56,0.18);
+      padding: 5px 14px; border-radius: 100px; margin-bottom: 20px;
+    }
+    .eyebrow::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--terra); flex-shrink: 0; }
+    .section-head { text-align: center; margin-bottom: 64px; }
+    .section-head h2 { font-size: clamp(28px, 4vw, 44px); margin-bottom: 14px; }
+    .section-head p { font-size: 17px; color: var(--ink-3); max-width: 500px; margin: 0 auto; line-height: 1.72; font-weight: 300; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--fb); font-size: 15px; font-weight: 500; padding: 13px 24px; border-radius: var(--r-md); transition: all 0.18s ease; cursor: pointer; white-space: nowrap; }
+    .btn-primary { background: var(--terra); color: var(--canvas); border: 1.5px solid var(--terra); }
+    .btn-primary:hover { background: var(--terra-lt); border-color: var(--terra-lt); transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: var(--ink); border: 1.5px solid var(--canvas-4); }
+    .btn-outline:hover { background: var(--canvas-2); border-color: var(--ink-4); }
+    .btn-soft { background: rgba(245,240,232,0.1); color: var(--canvas); border: 1.5px solid rgba(245,240,232,0.18); }
+    .btn-soft:hover { background: rgba(245,240,232,0.18); }
+    .btn-lg  { padding: 16px 32px; font-size: 16px; }
+    .btn-sm  { padding: 9px 18px; font-size: 13px; }
+    .btn-full { width: 100%; }
+
+    /* NAV */
+    .nav { position: sticky; top: 0; z-index: 100; background: rgba(245,240,232,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--canvas-4); }
+    .nav__inner { display: flex; align-items: center; justify-content: space-between; height: 66px; }
+    .nav__logo { display: flex; align-items: center; gap: 10px; }
+    .nav__mark { width: 34px; height: 34px; border-radius: var(--r-sm); background: var(--bark-2); display: flex; align-items: center; justify-content: center; }
+    .nav__name { font-family: var(--fh); font-size: 20px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+    .nav__links { display: flex; align-items: center; gap: 34px; }
+    .nav__links a { font-size: 14px; color: var(--ink-2); transition: color 0.15s; }
+    .nav__links a:hover { color: var(--ink); }
+    .nav__actions { display: flex; align-items: center; gap: 10px; }
+
+    /* HERO */
+    .hero { background: var(--bark); padding: 96px 0 0; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(245,240,232,0.04) 1px, transparent 1px); background-size: 24px 24px; pointer-events: none; }
+    .hero__glow { position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 800px; height: 500px; background: radial-gradient(ellipse, rgba(184,92,56,0.18) 0%, rgba(196,154,60,0.06) 50%, transparent 80%); pointer-events: none; }
+    .hero__glow-2 { position: absolute; bottom: 0; right: -60px; width: 400px; height: 340px; background: radial-gradient(ellipse, rgba(90,122,90,0.1) 0%, transparent 70%); pointer-events: none; }
+    .hero__content { position: relative; z-index: 1; text-align: center; }
+    .hero__badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(184,92,56,0.14); border: 1px solid rgba(184,92,56,0.28); border-radius: 100px; padding: 7px 18px; margin-bottom: 34px; font-size: 12px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: #e8a880; }
+    .hero__badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--terra-lt); animation: breathe 2.4s ease-in-out infinite; }
+    @keyframes breathe { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+    .hero h1 { font-family: var(--fh); font-size: clamp(42px, 7vw, 80px); font-weight: 600; line-height: 1.02; letter-spacing: -0.025em; color: var(--canvas); margin-bottom: 26px; }
+    .hero h1 em { font-style: italic; color: #e8a880; }
+    .hero__sub { font-size: clamp(16px, 2vw, 19px); font-weight: 300; color: rgba(245,240,232,0.52); max-width: 520px; margin: 0 auto 46px; line-height: 1.72; }
+    .hero__ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+    .hero__note { font-size: 12px; color: rgba(245,240,232,0.28); margin-bottom: 72px; }
+
+    /* HERO SCREEN */
+    .hero__screen-wrap { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; mask-image: linear-gradient(to bottom, black 55%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%); }
+    .hero__screen { background: var(--bark-2); border: 1px solid rgba(245,240,232,0.08); border-bottom: none; border-radius: 16px 16px 0 0; overflow: hidden; box-shadow: 0 -20px 80px rgba(0,0,0,0.4); }
+    .screen-chrome { background: #2a1e12; padding: 14px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(245,240,232,0.06); }
+    .sdot { width: 10px; height: 10px; border-radius: 50%; }
+    .sdot-r { background: #b85c5c; } .sdot-y { background: #c49a3c; } .sdot-g { background: #5a8a5a; }
+    .screen-url { flex: 1; background: rgba(245,240,232,0.06); border-radius: 6px; padding: 5px 14px; font-size: 11px; color: rgba(245,240,232,0.28); text-align: center; font-family: var(--fb); }
+    .app-shell { display: grid; grid-template-columns: 220px 1fr; min-height: 400px; }
+    .app-side { background: #261a0f; border-right: 1px solid rgba(245,240,232,0.05); padding: 18px 12px; }
+    .side-lbl { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(245,240,232,0.22); padding: 0 10px; margin-bottom: 7px; margin-top: 14px; }
+    .side-lbl:first-child { margin-top: 0; }
+    .side-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 6px; margin-bottom: 2px; font-size: 12px; color: rgba(245,240,232,0.38); }
+    .side-row.active { background: rgba(184,92,56,0.18); color: rgba(245,240,232,0.88); }
+    .side-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.5; flex-shrink: 0; }
+    .side-row.active .side-dot { background: #e8a880; opacity: 1; }
+    .app-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .app-bar { display: flex; align-items: center; justify-content: space-between; }
+    .app-title { font-family: var(--fh); font-size: 15px; font-weight: 600; color: rgba(245,240,232,0.88); }
+    .app-status { background: rgba(90,122,90,0.18); border: 1px solid rgba(90,122,90,0.28); color: #8fba8f; font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 100px; }
+    .kpi-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .kpi { background: rgba(245,240,232,0.04); border: 1px solid rgba(245,240,232,0.07); border-radius: 10px; padding: 14px 16px; }
+    .kpi-n { font-family: var(--fh); font-size: 22px; font-weight: 600; color: var(--canvas); line-height: 1; }
+    .kpi-n.green { color: #8fba8f; } .kpi-n.amber { color: #ddb85c; }
+    .kpi-l { font-size: 10px; color: rgba(245,240,232,0.3); margin-top: 5px; }
+    .gantt-wrap { background: rgba(245,240,232,0.03); border: 1px solid rgba(245,240,232,0.06); border-radius: 10px; padding: 16px; }
+    .gantt-hdr { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,240,232,0.22); margin-bottom: 14px; }
+    .g-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .g-row:last-child { margin-bottom: 0; }
+    .g-lbl { font-size: 10px; color: rgba(245,240,232,0.35); width: 80px; flex-shrink: 0; }
+    .g-track { flex: 1; height: 7px; background: rgba(245,240,232,0.06); border-radius: 4px; overflow: hidden; }
+    .g-fill { height: 100%; border-radius: 4px; }
+    .g-pct { font-size: 9px; color: rgba(245,240,232,0.2); width: 28px; text-align: right; }
+
+    /* STATS */
+    .statsbar { background: var(--bark-2); border-top: 1px solid rgba(245,240,232,0.06); }
+    .statsbar__inner { display: grid; grid-template-columns: repeat(4,1fr); border-left: 1px solid rgba(245,240,232,0.06); }
+    .stat-cell { padding: 34px 20px; text-align: center; border-right: 1px solid rgba(245,240,232,0.06); }
+    .stat-n { font-family: var(--fh); font-size: 34px; font-weight: 600; color: var(--canvas); letter-spacing: -0.02em; line-height: 1; }
+    .stat-l { font-size: 13px; color: rgba(245,240,232,0.38); margin-top: 6px; }
+
+    /* FEATURES */
+    .feat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .feat { background: var(--canvas-2); border: 1px solid var(--canvas-4); border-radius: var(--r-lg); padding: 28px 24px; transition: box-shadow 0.2s, transform 0.2s; }
+    .feat:hover { box-shadow: 0 6px 24px rgba(59,42,26,0.08); transform: translateY(-2px); }
+    .feat-icon { width: 44px; height: 44px; border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+    .feat h3 { font-family: var(--fh); font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .feat p  { font-size: 14px; color: var(--ink-3); line-height: 1.65; font-weight: 300; }
+
+    /* STEPS */
+    .steps { display: flex; flex-direction: column; max-width: 680px; margin: 0 auto; }
+    .step { display: flex; gap: 24px; padding: 30px 0; border-bottom: 1px solid var(--canvas-4); }
+    .step:last-child { border-bottom: none; }
+    .step-n { width: 38px; height: 38px; border-radius: 50%; background: var(--bark-3); color: var(--canvas-2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: var(--fh); font-size: 15px; font-weight: 600; margin-top: 2px; }
+    .step h3 { font-family: var(--fh); font-size: 18px; font-weight: 600; margin-bottom: 7px; }
+    .step p  { font-size: 15px; color: var(--ink-3); line-height: 1.65; font-weight: 300; }
+
+    /* TESTIMONIALS */
+    .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+    .testi { background: var(--canvas-2); border: 1px solid var(--canvas-4); border-radius: var(--r-lg); padding: 28px; display: flex; flex-direction: column; }
+    .stars { color: var(--wheat); font-size: 13px; letter-spacing: 2px; margin-bottom: 14px; }
+    .testi blockquote { font-family: var(--fh); font-size: 15px; color: var(--ink-2); line-height: 1.72; font-style: italic; flex: 1; margin-bottom: 22px; }
+    .testi-who { display: flex; align-items: center; gap: 12px; }
+    .avi { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+    .avi-a { background: var(--terra-pale); color: var(--bark-3); }
+    .avi-b { background: var(--sage-pale);  color: var(--sage); }
+    .avi-c { background: var(--wheat-pale); color: var(--bark-3); }
+    .testi-name { font-size: 14px; font-weight: 500; }
+    .testi-co   { font-size: 12px; color: var(--ink-3); margin-top: 1px; }
+
+    /* INTEGRATIONS */
+    .integ-wrap { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .integ-pill { background: var(--canvas-2); border: 1px solid var(--canvas-4); border-radius: 100px; padding: 10px 22px; display: flex; align-items: center; gap: 9px; font-size: 14px; color: var(--ink-2); transition: box-shadow 0.18s, transform 0.18s; }
+    .integ-pill:hover { box-shadow: 0 4px 12px rgba(59,42,26,0.08); transform: translateY(-1px); }
+    .integ-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* PRICING */
+    .pricing-toggle-row { display: flex; align-items: center; gap: 14px; justify-content: center; margin-bottom: 52px; }
+    .tog-lbl { font-size: 14px; color: var(--ink-3); transition: color 0.15s; }
+    .tog-lbl.on { color: var(--ink); font-weight: 500; }
+    .tog { position: relative; width: 44px; height: 24px; background: var(--terra); border-radius: 12px; cursor: pointer; flex-shrink: 0; }
+    .tog::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--canvas); box-shadow: 0 1px 3px rgba(0,0,0,0.15); transition: transform 0.2s ease; }
+    .tog.annual::after { transform: translateX(20px); }
+    .save-pill { background: var(--sage-pale); color: var(--sage); font-size: 11px; font-weight: 600; padding: 3px 11px; border-radius: 100px; }
+    .plans-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; align-items: start; }
+    .plan { background: var(--canvas-2); border: 1.5px solid var(--canvas-4); border-radius: var(--r-xl); padding: 32px; transition: box-shadow 0.2s; }
+    .plan:hover { box-shadow: 0 8px 32px rgba(59,42,26,0.08); }
+    .plan.featured { background: var(--bark-2); border-color: rgba(184,92,56,0.4); box-shadow: 0 0 0 1px rgba(184,92,56,0.3), 0 16px 48px rgba(46,35,24,0.3); }
+    .plan-badge { display: inline-block; background: var(--terra-pale); color: var(--bark-3); font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 100px; margin-bottom: 14px; }
+    .plan-name { font-family: var(--fh); font-size: 22px; font-weight: 600; margin-bottom: 5px; }
+    .plan.featured .plan-name { color: var(--canvas); }
+    .plan-desc { font-size: 13px; color: var(--ink-3); margin-bottom: 24px; font-weight: 300; }
+    .plan.featured .plan-desc { color: rgba(245,240,232,0.42); }
+    .plan-price-row { display: flex; align-items: baseline; gap: 2px; margin-bottom: 24px; }
+    .plan-cur { font-family: var(--fh); font-size: 22px; font-weight: 600; }
+    .plan.featured .plan-cur { color: var(--canvas); }
+    .plan-amt { font-family: var(--fh); font-size: 50px; font-weight: 600; line-height: 1; letter-spacing: -0.04em; }
+    .plan.featured .plan-amt { color: var(--canvas); }
+    .plan-per { font-size: 14px; color: var(--ink-3); margin-left: 2px; }
+    .plan.featured .plan-per { color: rgba(245,240,232,0.38); }
+    .plan-divider { height: 1px; background: var(--canvas-4); margin: 20px 0; }
+    .plan.featured .plan-divider { background: rgba(245,240,232,0.1); }
+    .plan-feats { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .plan-feat { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; }
+    .pf-check { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; }
+    .pf-yes { background: var(--sage-pale); color: var(--sage); }
+    .pf-no  { background: var(--canvas-3); color: var(--ink-4); }
+    .plan.featured .pf-yes { background: rgba(90,122,90,0.2); color: #8fba8f; }
+    .plan.featured .pf-no  { background: rgba(245,240,232,0.06); color: rgba(245,240,232,0.18); }
+    .pf-txt { color: var(--ink-3); font-weight: 300; }
+    .pf-txt.on { color: var(--ink); font-weight: 400; }
+    .plan.featured .pf-txt.on { color: rgba(245,240,232,0.88); }
+    .plan.featured .pf-txt    { color: rgba(245,240,232,0.35); }
+
+    /* FAQ */
+    .faq { max-width: 700px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid var(--canvas-4); }
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+    .faq-q { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 0; cursor: pointer; font-family: var(--fh); font-size: 16px; font-weight: 600; }
+    .faq-ico { width: 24px; height: 24px; border-radius: 50%; background: var(--canvas-3); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 300; color: var(--ink-3); flex-shrink: 0; transition: transform 0.2s, background 0.2s; }
+    details[open] .faq-ico { transform: rotate(45deg); background: var(--terra-pale); color: var(--terra); }
+    .faq-a { padding: 0 0 22px; font-size: 15px; color: var(--ink-3); line-height: 1.72; font-weight: 300; }
+
+    /* CTA */
+    .cta-sect { background: var(--bark); padding: 100px 0; text-align: center; position: relative; overflow: hidden; }
+    .cta-sect::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 600px; height: 300px; background: radial-gradient(ellipse, rgba(184,92,56,0.15) 0%, transparent 70%); pointer-events: none; }
+    .cta-sect h2 { font-family: var(--fh); font-size: clamp(32px, 5vw, 54px); font-weight: 600; color: var(--canvas); line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 16px; position: relative; }
+    .cta-sect p { font-size: 18px; color: rgba(245,240,232,0.45); max-width: 430px; margin: 0 auto 40px; position: relative; font-weight: 300; }
+    .cta-fine { font-size: 12px; color: rgba(245,240,232,0.22); margin-top: 16px; position: relative; }
+
+    /* FOOTER */
+    footer { background: #1e1509; padding: 72px 0 40px; border-top: 1px solid rgba(245,240,232,0.06); }
+    .footer-grid { display: grid; grid-template-columns: 1.6fr repeat(4,1fr); gap: 48px; margin-bottom: 56px; }
+    .footer-tagline { font-size: 14px; color: rgba(245,240,232,0.3); margin-top: 12px; line-height: 1.6; max-width: 200px; font-weight: 300; }
+    .footer-col-title { font-size: 11px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(245,240,232,0.32); margin-bottom: 16px; }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a { font-size: 14px; color: rgba(245,240,232,0.4); transition: color 0.15s; font-weight: 300; }
+    .footer-links a:hover { color: rgba(245,240,232,0.82); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 24px; border-top: 1px solid rgba(245,240,232,0.06); flex-wrap: wrap; gap: 12px; }
+    .footer-copy { font-size: 13px; color: rgba(245,240,232,0.22); font-weight: 300; }
+    .footer-social { display: flex; gap: 10px; }
+    .soc { width: 34px; height: 34px; border-radius: 7px; background: rgba(245,240,232,0.05); border: 1px solid rgba(245,240,232,0.08); display: flex; align-items: center; justify-content: center; color: rgba(245,240,232,0.38); font-size: 12px; transition: all 0.18s; }
+    .soc:hover { background: rgba(245,240,232,0.1); color: rgba(245,240,232,0.82); }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+    .au { animation: fadeUp 0.6s ease both; }
+    .d1 { animation-delay: 0.08s; } .d2 { animation-delay: 0.18s; } .d3 { animation-delay: 0.28s; } .d4 { animation-delay: 0.38s; }
+    .reveal { opacity:0; transform:translateY(18px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .reveal.visible { opacity:1; transform:none; }
+
+    @media (max-width: 960px) {
+      .feat-grid { grid-template-columns: repeat(2,1fr); }
+      .plans-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
+      .testi-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .statsbar__inner { grid-template-columns: repeat(2,1fr); }
+      .app-shell { grid-template-columns: 1fr; }
+      .app-side { display: none; }
+    }
+    @media (max-width: 640px) {
+      .nav__links { display: none; }
+      .feat-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 38px; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="nav__inner">
+      <a href="/" class="nav__logo">
+        <div class="nav__mark">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 16L10 4L17 16H3Z" fill="#f5f0e8" opacity=".85"/><rect x="8" y="10" width="4" height="6" rx=".5" fill="#f5f0e8" opacity=".55"/></svg>
+        </div>
+        <span class="nav__name">Renovator</span>
+      </a>
+      <div class="nav__links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="nav__actions">
+        <a href="#" class="btn btn-outline btn-sm">Sign in</a>
+        <a href="#pricing" class="btn btn-primary btn-sm">Start free trial</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero__glow"></div>
+  <div class="hero__glow-2"></div>
+  <div class="wrap">
+    <div class="hero__content">
+      <div class="hero__badge au"><div class="hero__badge-dot"></div>Built for contractors &amp; home builders</div>
+      <h1 class="au d1">Manage every project.<br><em>Deliver on time,</em><br>every time.</h1>
+      <p class="hero__sub au d2">Renovator brings your bids, schedules, crews, budgets, and clients into one simple platform — purpose-built for renovation and new construction.</p>
+      <div class="hero__ctas au d3">
+        <a href="#pricing" class="btn btn-primary btn-lg">Start free for 14 days</a>
+        <a href="#" class="btn btn-soft btn-lg">Watch a demo</a>
+      </div>
+      <p class="hero__note au d4">No credit card required &nbsp;·&nbsp; Cancel anytime</p>
+    </div>
+    <div class="hero__screen-wrap">
+      <div class="hero__screen">
+        <div class="screen-chrome">
+          <div class="sdot sdot-r"></div><div class="sdot sdot-y"></div><div class="sdot sdot-g"></div>
+          <div class="screen-url">app.renovatorapp.com / dashboard</div>
+        </div>
+        <div class="app-shell">
+          <div class="app-side">
+            <div class="side-lbl">Overview</div>
+            <div class="side-row active"><div class="side-dot"></div>Dashboard</div>
+            <div class="side-row"><div class="side-dot"></div>Projects</div>
+            <div class="side-row"><div class="side-dot"></div>Schedule</div>
+            <div class="side-lbl">Finance</div>
+            <div class="side-row"><div class="side-dot"></div>Estimates</div>
+            <div class="side-row"><div class="side-dot"></div>Invoices</div>
+            <div class="side-row"><div class="side-dot"></div>Budget tracker</div>
+            <div class="side-lbl">Team</div>
+            <div class="side-row"><div class="side-dot"></div>Crew</div>
+            <div class="side-row"><div class="side-dot"></div>Subcontractors</div>
+            <div class="side-lbl">Clients</div>
+            <div class="side-row"><div class="side-dot"></div>Client portal</div>
+            <div class="side-row"><div class="side-dot"></div>Change orders</div>
+          </div>
+          <div class="app-body">
+            <div class="app-bar">
+              <div class="app-title">Maple St Renovation</div>
+              <div class="app-status">On schedule</div>
+            </div>
+            <div class="kpi-row">
+              <div class="kpi"><div class="kpi-n">$284k</div><div class="kpi-l">Revenue this month</div></div>
+              <div class="kpi"><div class="kpi-n green">96%</div><div class="kpi-l">On-time delivery</div></div>
+              <div class="kpi"><div class="kpi-n amber">3</div><div class="kpi-l">Pending approvals</div></div>
+            </div>
+            <div class="gantt-wrap">
+              <div class="gantt-hdr">Project timeline — Maple St</div>
+              <div class="g-row"><div class="g-lbl">Demo / Prep</div><div class="g-track"><div class="g-fill" style="width:100%;background:#5a7a5a;"></div></div><div class="g-pct">Done</div></div>
+              <div class="g-row"><div class="g-lbl">Framing</div><div class="g-track"><div class="g-fill" style="width:75%;background:#b85c38;"></div></div><div class="g-pct">75%</div></div>
+              <div class="g-row"><div class="g-lbl">Electrical</div><div class="g-track"><div class="g-fill" style="width:20%;background:#b85c38;opacity:.5;"></div></div><div class="g-pct">20%</div></div>
+              <div class="g-row"><div class="g-lbl">HVAC</div><div class="g-track"><div class="g-fill" style="width:5%;background:#b85c38;opacity:.25;"></div></div><div class="g-pct">—</div></div>
+              <div class="g-row"><div class="g-lbl">Finishing</div><div class="g-track"><div class="g-fill" style="width:0%;"></div></div><div class="g-pct">—</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="statsbar">
+  <div class="wrap">
+    <div class="statsbar__inner">
+      <div class="stat-cell"><div class="stat-n">2,400+</div><div class="stat-l">Active contractors</div></div>
+      <div class="stat-cell"><div class="stat-n">$1.2B</div><div class="stat-l">Projects managed</div></div>
+      <div class="stat-cell"><div class="stat-n">98%</div><div class="stat-l">Customer satisfaction</div></div>
+      <div class="stat-cell"><div class="stat-n">4.9 ★</div><div class="stat-l">Average rating</div></div>
+    </div>
+  </div>
+</div>
+
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Everything you need</div>
+      <h2>One platform. Every phase.</h2>
+      <p>From the first bid to the final walkthrough, Renovator keeps your projects on budget and on schedule.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat reveal">
+        <div class="feat-icon" style="background:var(--terra-pale);"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="8" height="8" rx="2" fill="#b85c38"/><rect x="12" y="2" width="8" height="8" rx="2" fill="#b85c38" opacity=".3"/><rect x="2" y="12" width="8" height="8" rx="2" fill="#b85c38" opacity=".3"/><rect x="12" y="12" width="8" height="8" rx="2" fill="#b85c38" opacity=".6"/></svg></div>
+        <h3>Project dashboard</h3><p>See every active project at a glance — timelines, budgets, crew assignments, and milestone status all in one view.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-icon" style="background:var(--sage-pale);"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 17L11 5L18 17H4Z" fill="#5a7a5a" opacity=".85"/><rect x="9" y="11" width="4" height="6" rx=".5" fill="#ede7d9"/></svg></div>
+        <h3>Bid &amp; estimate builder</h3><p>Create professional, itemized estimates in minutes with your own cost templates. Win more bids with polished proposals.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-icon" style="background:var(--wheat-pale);"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="7.5" stroke="#c49a3c" stroke-width="1.5"/><path d="M11 7V11L14 13" stroke="#c49a3c" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <h3>Scheduling &amp; Gantt</h3><p>Drag-and-drop scheduling with Gantt charts. Coordinate crews, subcontractors, and inspections without conflicts.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-icon" style="background:var(--rose-pale);"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="5" width="16" height="12" rx="2" stroke="#9e5f5f" stroke-width="1.5"/><path d="M7 9H15M7 13H11" stroke="#9e5f5f" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <h3>Budget tracking</h3><p>Track costs against estimates in real time. Catch overruns early with automated alerts and variance reports.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-icon" style="background:var(--slate-pale);"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="8" cy="8" r="3.5" stroke="#6b7e8a" stroke-width="1.5"/><circle cx="15" cy="14" r="3.5" stroke="#6b7e8a" stroke-width="1.5" opacity=".5"/></svg></div>
+        <h3>Client portal</h3><p>Give clients a branded portal to approve change orders, view progress photos, and sign documents — no app needed.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-icon" style="background:var(--sage-pale);"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 16L8 9L12 12.5L16 7L20 10" stroke="#5a7a5a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Reports &amp; insights</h3><p>Profit margins, crew utilization, project performance — get the numbers you need to grow your business with confidence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt" id="how-it-works">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Simple setup</div>
+      <h2>Up and running in minutes</h2>
+      <p>No lengthy onboarding. No consultants. Just results from day one.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><div class="step-n">1</div><div><h3>Import your existing projects</h3><p>Bring in your current jobs from spreadsheets or other tools in seconds. We handle the migration so you don't lose a step.</p></div></div>
+      <div class="step reveal"><div class="step-n">2</div><div><h3>Invite your crew and subs</h3><p>Add team members and subcontractors. Assign roles, set permissions, and get everyone aligned from day one.</p></div></div>
+      <div class="step reveal"><div class="step-n">3</div><div><h3>Build and win your first bid</h3><p>Use our estimate templates to put together a polished proposal. Send directly from Renovator and get notified the moment the client approves.</p></div></div>
+      <div class="step reveal"><div class="step-n">4</div><div><h3>Track everything, stress less</h3><p>Your dashboard updates in real time as work progresses. Know where every dollar and every hour is going — always.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="testimonials">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Real contractors. Real results.</div>
+      <h2>Trusted by builders nationwide</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi reveal">
+        <div class="stars">★★★★★</div>
+        <blockquote>"We cut our project admin time by nearly half. The budget tracking alone has saved us from major overruns on two big jobs this year."</blockquote>
+        <div class="testi-who"><div class="avi avi-a">JM</div><div><div class="testi-name">James Merritt</div><div class="testi-co">Merritt Construction, TX</div></div></div>
+      </div>
+      <div class="testi reveal">
+        <div class="stars">★★★★★</div>
+        <blockquote>"My clients love the portal. They can see progress updates without calling me every day. It's improved relationships and reduced my stress enormously."</blockquote>
+        <div class="testi-who"><div class="avi avi-b">SP</div><div><div class="testi-name">Sandra Perez</div><div class="testi-co">Perez Home Builders, CA</div></div></div>
+      </div>
+      <div class="testi reveal">
+        <div class="stars">★★★★★</div>
+        <blockquote>"I've tried four other tools. Renovator is the only one that actually fits how a general contractor works. The Gantt scheduler is a game-changer."</blockquote>
+        <div class="testi-who"><div class="avi avi-c">TK</div><div><div class="testi-name">Tyler Kowalski</div><div class="testi-co">TK Renovations, IL</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Integrations</div>
+      <h2>Works with your favorite tools</h2>
+      <p>Connect Renovator to the software your business already runs on.</p>
+    </div>
+    <div class="integ-wrap reveal">
+      <div class="integ-pill"><div class="integ-dot" style="background:var(--terra);"></div>QuickBooks</div>
+      <div class="integ-pill"><div class="integ-dot" style="background:var(--sage);"></div>Stripe</div>
+      <div class="integ-pill"><div class="integ-dot" style="background:var(--slate);"></div>DocuSign</div>
+      <div class="integ-pill"><div class="integ-dot" style="background:var(--wheat);"></div>Procore</div>
+      <div class="integ-pill"><div class="integ-dot" style="background:var(--rose);"></div>Google Calendar</div>
+      <div class="integ-pill"><div class="integ-dot" style="background:var(--bark-3);"></div>Slack</div>
+      <div class="integ-pill"><div class="integ-dot" style="background:var(--sage);"></div>Xero</div>
+      <div class="integ-pill"><div class="integ-dot" style="background:var(--terra);"></div>ServiceTitan</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pricing">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Pricing</div>
+      <h2>Simple, honest pricing</h2>
+      <p>Scale as your business grows. No hidden fees, no surprises.</p>
+    </div>
+    <div class="pricing-toggle-row">
+      <span class="tog-lbl on" id="lbl-m">Monthly</span>
+      <div class="tog" id="billing-tog" onclick="toggleBilling(this)"></div>
+      <span class="tog-lbl" id="lbl-a">Annual</span>
+      <span class="save-pill">Save 20%</span>
+    </div>
+    <div class="plans-grid">
+      <div class="plan reveal">
+        <div class="plan-name">Starter</div>
+        <div class="plan-desc">Up to 3 active projects</div>
+        <div class="plan-price-row"><span class="plan-cur">$</span><span class="plan-amt" id="p-starter" data-m="49" data-a="39">49</span><span class="plan-per">/mo</span></div>
+        <div class="plan-divider"></div>
+        <div class="plan-feats">
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">Project dashboard</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">Bid builder</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">Basic scheduling</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">2 team members</span></div>
+          <div class="plan-feat"><span class="pf-check pf-no">—</span><span class="pf-txt">Client portal</span></div>
+          <div class="plan-feat"><span class="pf-check pf-no">—</span><span class="pf-txt">Gantt scheduling</span></div>
+          <div class="plan-feat"><span class="pf-check pf-no">—</span><span class="pf-txt">Budget tracking</span></div>
+          <div class="plan-feat"><span class="pf-check pf-no">—</span><span class="pf-txt">Advanced reports</span></div>
+        </div>
+        <a href="#" class="btn btn-outline btn-full">Get started</a>
+      </div>
+      <div class="plan featured reveal">
+        <div class="plan-badge">Most popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-desc">Up to 20 active projects</div>
+        <div class="plan-price-row"><span class="plan-cur">$</span><span class="plan-amt" id="p-pro" data-m="129" data-a="99">129</span><span class="plan-per">/mo</span></div>
+        <div class="plan-divider"></div>
+        <div class="plan-feats">
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">Everything in Starter</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">Gantt scheduling</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">Budget tracking</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">Client portal</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">Up to 15 team members</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">Advanced reports</span></div>
+          <div class="plan-feat"><span class="pf-check pf-no">—</span><span class="pf-txt">Unlimited projects</span></div>
+          <div class="plan-feat"><span class="pf-check pf-no">—</span><span class="pf-txt">Custom integrations</span></div>
+        </div>
+        <a href="#" class="btn btn-primary btn-full">Start free trial</a>
+      </div>
+      <div class="plan reveal">
+        <div class="plan-name">Business</div>
+        <div class="plan-desc">Unlimited projects</div>
+        <div class="plan-price-row"><span class="plan-cur">$</span><span class="plan-amt" id="p-biz" data-m="299" data-a="239">299</span><span class="plan-per">/mo</span></div>
+        <div class="plan-divider"></div>
+        <div class="plan-feats">
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">Everything in Pro</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">Unlimited team members</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">Custom integrations</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">Dedicated support</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">White-label portal</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">SSO &amp; audit logs</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">Priority onboarding</span></div>
+          <div class="plan-feat"><span class="pf-check pf-yes">✓</span><span class="pf-txt on">SLA &amp; uptime guarantee</span></div>
+        </div>
+        <a href="#" class="btn btn-outline btn-full">Contact sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt" id="faq">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">FAQ</div>
+      <h2>Common questions</h2>
+    </div>
+    <div class="faq">
+      <details class="faq-item reveal"><summary class="faq-q">Is there a free trial? <span class="faq-ico">+</span></summary><div class="faq-a">Yes — every plan comes with a 14-day free trial. No credit card required to start. You get full access to all features on your chosen plan.</div></details>
+      <details class="faq-item reveal"><summary class="faq-q">Can I import my existing projects? <span class="faq-ico">+</span></summary><div class="faq-a">Absolutely. You can import from spreadsheets (CSV/Excel) or migrate from other tools. Our onboarding team can assist with complex migrations at no extra cost.</div></details>
+      <details class="faq-item reveal"><summary class="faq-q">How many users can I add? <span class="faq-ico">+</span></summary><div class="faq-a">Starter supports 2 team members, Pro supports up to 15, and Business supports unlimited users including subcontractors and field crews.</div></details>
+      <details class="faq-item reveal"><summary class="faq-q">Does Renovator work on mobile? <span class="faq-ico">+</span></summary><div class="faq-a">Yes. Renovator is fully responsive and works on phones and tablets. Your crew can log updates, upload photos, and check schedules from the job site in real time.</div></details>
+      <details class="faq-item reveal"><summary class="faq-q">Can I cancel anytime? <span class="faq-ico">+</span></summary><div class="faq-a">Yes. Cancel anytime — no fees, no hassle. You'll keep full access until the end of your billing period.</div></details>
+      <details class="faq-item reveal"><summary class="faq-q">Do you offer annual discounts? <span class="faq-ico">+</span></summary><div class="faq-a">Annual billing saves 20% across all plans. For teams of 50+, contact us for custom enterprise pricing with volume discounts and dedicated support.</div></details>
+    </div>
+  </div>
+</section>
+
+<section class="cta-sect">
+  <div class="wrap--sm">
+    <h2>Ready to build smarter?</h2>
+    <p>Join over 2,400 contractors who run tighter projects and grow faster with Renovator.</p>
+    <a href="#pricing" class="btn btn-primary btn-lg">Start your free 14-day trial</a>
+    <p class="cta-fine">No credit card &nbsp;·&nbsp; Setup in minutes &nbsp;·&nbsp; Cancel anytime</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="nav__logo"><div class="nav__mark"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 16L10 4L17 16H3Z" fill="#f5f0e8" opacity=".85"/><rect x="8" y="10" width="4" height="6" rx=".5" fill="#f5f0e8" opacity=".55"/></svg></div><span class="nav__name" style="color:var(--canvas);">Renovator</span></div>
+        <p class="footer-tagline">Built for contractors who build what matters.</p>
+      </div>
+      <div><div class="footer-col-title">Product</div><div class="footer-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#">Changelog</a><a href="#">Roadmap</a></div></div>
+      <div><div class="footer-col-title">Company</div><div class="footer-links"><a href="#">About</a><a href="#">Blog</a><a href="#">Careers</a><a href="#">Press</a></div></div>
+      <div><div class="footer-col-title">Support</div><div class="footer-links"><a href="#">Help center</a><a href="#">Contact</a><a href="#">Status</a><a href="#">Security</a></div></div>
+      <div><div class="footer-col-title">Legal</div><div class="footer-links"><a href="#">Privacy policy</a><a href="#">Terms of service</a><a href="#">Cookie policy</a></div></div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 Renovator, Inc. All rights reserved.</span>
+      <div class="footer-social"><a href="#" class="soc">𝕏</a><a href="#" class="soc">in</a><a href="#" class="soc">▶</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  let annual = false;
+  function toggleBilling(el) {
+    annual = !annual;
+    el.classList.toggle('annual', annual);
+    document.getElementById('lbl-m').classList.toggle('on', !annual);
+    document.getElementById('lbl-a').classList.toggle('on', annual);
+    ['p-starter','p-pro','p-biz'].forEach(id => {
+      const n = document.getElementById(id);
+      if (n) n.textContent = n.dataset[annual ? 'a' : 'm'];
+    });
+  }
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
